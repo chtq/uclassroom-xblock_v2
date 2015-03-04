@@ -1,0 +1,3 @@
+-e .
+paramiko
+docker-py

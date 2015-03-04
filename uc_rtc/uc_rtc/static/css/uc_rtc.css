@@ -1,0 +1,40 @@
+/* CSS for UcRtcXBlock */
+.uc_xblock
+{
+    width: 800px;
+    border: solid 1px #ccc;
+}
+
+.uc_main
+{
+    width: 540px;
+}
+
+.uc_rside
+{
+    float: right;
+    width: 240px;
+}
+
+
+#messageList
+{
+	height: 180px;
+	overflow: auto;
+	border: solid 1px #eee;
+}
+
+.uc_clear
+{
+    clear: both;
+}
+
+.uc_numeric
+{
+    width: 80px;
+}
+
+.uc_input
+{
+    width: 380px;
+}

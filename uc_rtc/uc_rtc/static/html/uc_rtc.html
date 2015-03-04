@@ -1,0 +1,53 @@
+<div class="uc_rtc_block uc_xblock">
+    <div class="uc_rside">
+        <div>
+            <h4>Camera:</h4>
+            <div>
+                <label for="camWidthInput">Width</label>
+                <input id="camWidthInput" min="1" max="1920" class="uc_numeric" type="number" value="640" />
+            </div>
+            <div>
+                <label class="sr-only" for="camHeightInput">Height</label>
+                <input id="camHeightInput" min="1" max="1080" class="uc_numeric" type="number" value="360" />
+            </div>
+            <a href="javascript:void(0)" id="shareCamButton" class="btn btn-primary">Share</a>
+            <hr />
+            <h4>Screen:</h4>
+            <div>
+                <label class="sr-only" for="scrWidthInput">Width</label>
+                <input id="scrWidthInput" min="1" max="1920" class="uc_numeric" type="number" value="1920" />
+            </div>
+            <div>
+                <label class="sr-only" for="scrHeightInput">Height</label>
+                <input id="scrHeightInput" min="1" max="1080" class="uc_numeric" type="number" value="1080" />
+            </div>
+            <a href="javascript:void(0)" id="shareScreenButton" class="btn btn-primary">Share</a>
+            <hr />
+            <h4>Room List:</h4>
+            <ul id="roomlist">
+            </ul>
+            <input id="roomNameInput" maxlength="16" type="text" placeholder="RoomName" class="textbox" />
+            <a href="javascript:void(0)" id="createRoomButton" class="btn btn-primary">CreateRoom</a>
+            <hr />
+            <h4>User List:</h4>
+            <ul id="userlist">
+            </ul>
+            <video autoplay controls id="remoteCam" style="background-color:#777;width:160px;height:90px;">cannot support HTML5 video element</video>
+            <a href="javascript:void(0)" id="leaveRoomButton" class="btn btn-default">LeaveRoom</a>
+        </div>
+    </div>
+    <div class="uc_main">
+        <div class="uc_videos">
+            <video autoplay controls id="remoteScr" style="background-color:#777;width:480px;height:270px;">cannot support HTML5 video element</video>
+            <video autoplay controls muted id="localScr" style="display:none;">cannot support HTML5 video element</video>
+            <video autoplay controls muted id="localCam" style="display:none;">cannot support HTML5 video element</video>
+        </div>
+        <div id="uc_messages">
+            <div id="messageList">
+            </div>
+            <input id="messageInput" type="text" class="uc_input" placeholder="say something..." />
+            <button class="btn btn-primary" id="sendMessageButton">SendMessage</button>
+        </div>
+    </div>
+    <div class="uc_clear"></div>
+</div>

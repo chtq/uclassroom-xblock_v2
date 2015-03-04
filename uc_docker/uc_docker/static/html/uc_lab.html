@@ -1,0 +1,73 @@
+<div class="uc_docker_block uc_xblock">
+    <h2>Labs Management</h2>
+    <div>
+        <table class="uc_table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Build Time</th>
+                    <th>Status</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+            <tfoot></tfoot>
+            <tbody>
+                {% for lab in labs %}
+                <tr>
+                    <td>{{ lab.name }}</td>
+                    <td>{{ lab.creation_time }}</td>
+                    <td>{{ lab.status }}</td>
+                    <td>
+                        <a id href="javascript:void(0);" class="small bg-green fg-white button show_detail_btn" name="{{ lab.name }}">Detail</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div>
+
+    </div>
+    <!-- Detail -->
+    <!--
+    <div class="modal fade" id="showLabDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_d" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel_d">Create new lab</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="lab_name_d">Lab Name</label>
+                        <input type="text" id="lab_name_d" name="lab_name" class="form-control" maxlength="16" required="required" value="" />
+                    </div>
+                    <div class="form-group">
+                        <label for="lab_desc_d">Lab Description</label>
+                        <textarea id="lab_desc_d" name="lab_desc" class="form-control" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="lab_project_d">Git Project</label>
+                        <select name="lab_project_d" id="lab_project_d" class="form-control" required="required">
+                            {% for project in projects %}
+                            <option value="{{ project }}">{{ project }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="lab_docker_file_d">Dockerfile - (your docker must FROM uclassroom/fedora-base)</label>
+                        <textarea id="lab_docker_file_d" name="lab_docker_file_d" class="form-control" rows="15"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="lab_make_scripts_d">Make Scripts</label>
+                        <textarea id="lab_make_scripts_d" name="lab_make_scripts_d" class="form-control" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="close_btn_d" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    -->
+</div>

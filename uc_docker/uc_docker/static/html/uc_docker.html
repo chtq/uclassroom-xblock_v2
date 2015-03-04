@@ -1,0 +1,64 @@
+<div class="uc_docker_block container uc_xblock">
+    <h2>Dockers Management</h2>
+    <div class="uc_div">
+        <h3>Dockers List</h3>
+        <table class="uc_table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Lab</th>
+                    <th>Built Date</th>
+                    <th>Operation</th>
+                </tr>
+            </thead>
+            <tfoot></tfoot>
+            <tbody>
+                {% for docker in dockers %}
+                <tr>
+                    <td>{{ docker.name }}</td>
+                    <td>{{ docker.lab.name }}</td>
+                    <td>{{ docker.creation_time }}</td>
+                    <td>
+                        {% if docker.status == "ready" %}
+                        <a href="javascript:void(0);" class="btn start_docker_btn btn-info btn-sm" name="{{ docker.name }}">Start</a>
+                        {% elif docker.status == "running" %}
+                        <a href="javascript:void(0);" class="btn stop_docker_btn btn-info btn-sm" name="{{ docker.name }}">Stop</a>
+                        <a href="http://{{ docker.host }}:{{ docker.port }}/" target="_blank" class="btn docker_terminal_btn btn-info btn-sm" name="{{ docker.name }}">Terminal</a>
+                        {% else %}
+                        {{ docker.status }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="uc_div">
+        <h3>Docker Tips</h3>
+        <br />
+        <label>Docker Name: [LOGIN_NAME]</label>
+        <br />
+        <label>Docker password: {{ password }}</label>
+    </div>
+    <div class="uc_div">
+        <h3>Docker Creation</h3>
+        <div>
+            <label for="docker_name">Docker Name</label>
+            <input type="text" id="docker_name" name="docker_name" maxlength="64" required="required" placeholder="mylab" />
+        </div>
+        <div>
+            <label for="docker_lab">Choose a lab</label>
+            <select name="docker_lab" id="docker_lab" required="required">
+                {% for lab in labs %}
+                <option value="{{ lab.name }}">{{ lab.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <span class="error-message">{{ message }}</span>
+        </div>
+        <div>
+            <button id="create_docker_btn" type="button" class="btn btn-primary">Create Docker</button>
+        </div>
+    </div>
+</div>

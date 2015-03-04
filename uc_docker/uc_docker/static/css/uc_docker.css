@@ -1,0 +1,45 @@
+/* CSS for UcDockerXBlock */
+.uc_xblock
+{
+    width: 600px;
+    border: solid 1px #ccc;
+}
+
+.setting-textarea
+{
+    width: 100%;
+}
+
+.uc_table
+{
+    border: solid 1px #ccc;
+}
+
+.uc_div
+{
+    padding: 10px 0;
+}
+
+.uc_table tbody tr
+{
+    border: solid 1px #999;
+}
+
+.uc_table tbody tr td
+{
+    border: solid 1px #666;
+}
+
+.uc_table thead tr
+{
+    border: solid 1px #999;
+    text-align: center;
+}
+
+.uc_table thead tr th
+{
+    background-color: #eee;
+    border: solid 1px #666;
+    width: 160px;
+    text-align: center;
+}
