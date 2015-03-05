@@ -43,7 +43,9 @@ $sudo apt-get install nodejs, npm
 ### OpenEDX Server
 1. To install docker, please visit http://docs.docker.com/installation/ubuntulinux/#ubuntu-precise-1204-lts-64-bit
 2. Set environment variable  
-```DOCKER_HOST=tcp://<docker_server_domain>:2376```  
+```
+DOCKER_HOST=tcp://docker_server_domain:2376
+```  
 
 ### uc_rtc XBlock
 1. Edit file ```uc_rtc/uc_rtc/static/js/src/static.js```, set SOCKET_IO_URL:  
