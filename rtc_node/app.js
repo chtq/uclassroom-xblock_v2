@@ -85,10 +85,10 @@ nsp.on('connection', function(socket) {
     console.log('socket on [connection]'.blue);
 
     var user = {
-		id: socket.id,  //here, user id is socket id, make emitting easier
-		classroom: {},
-		name: '',
-		color: '',
+        id: socket.id,  //here, user id is socket id, make emitting easier
+        classroom: {},
+        name: '',
+        color: '',
         cameraSharing: false,
         microphoneSharing: false,
         screenSharing: false

@@ -36,5 +36,10 @@
 
 .uc_input
 {
+    width: 180px;
+}
+
+.uc_input2
+{
     width: 380px;
 }

@@ -7,7 +7,6 @@ import logging
 import pkg_resources
 
 from Crypto.Random import atfork
-
 from django.template import Context, Template
 
 

@@ -8,17 +8,8 @@ class UcRtcXBlock(XBlock):
     def student_view(self, context=None):
         # preview in studio
         if self.runtime.anonymous_student_id == "student":
-            context_dict = {
-                "title": "This a real-time communication XBlock base-on WebRTC!",
-                "message": "There is nothing to edit in studio view."
-            }
-            fragment = Fragment()
-            fragment.add_content(Util.render_template('static/html/uc_message.html', context_dict))
-            fragment.add_css(Util.load_resource("static/css/uc_rtc.css"))
-            fragment.add_javascript(Util.load_resource("static/js/src/uc_null.js"))
-            fragment.initialize_js("UcRtcXBlock")
-            return fragment
-
+            return self.message_view(title="This a real-time communication XBlock base-on WebRTC!",
+                                     message="There is nothing to edit in studio view.")
         fragment = Fragment()
         fragment.add_content(Util.render_template('static/html/uc_rtc.html'))
         fragment.add_css(Util.load_resource("static/css/uc_rtc.css"))
@@ -34,6 +25,18 @@ class UcRtcXBlock(XBlock):
         fragment.add_content(Util.render_template('static/html/uc_rtc_studio.html'))
         fragment.add_css(Util.load_resource("static/css/uc_rtc.css"))
         fragment.add_javascript(Util.load_resource("static/js/src/uc_rtc_edit.js"))
+        fragment.initialize_js("UcRtcXBlock")
+        return fragment
+
+    def message_view(self, title, message, context=None):
+        context_dict = {
+            "title": title,
+            "message": message
+        }
+        fragment = Fragment()
+        fragment.add_content(Util.render_template('static/html/uc_message.html', context_dict))
+        fragment.add_css(Util.load_resource("static/css/uc_rtc.css"))
+        fragment.add_javascript(Util.load_resource("static/js/src/uc_null.js"))
         fragment.initialize_js("UcRtcXBlock")
         return fragment
 

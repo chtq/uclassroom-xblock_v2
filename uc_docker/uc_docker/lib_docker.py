@@ -80,40 +80,6 @@ class DockerHelper(object):
         self._client.stop(docker_obj.container_id)
         print "DockerHelper.stop_student_docker.complete"
 
-    def _create_docker_file(self, docker_obj, private_key, public_key, user_name, user_email, git_host, git_port, docker_namespace, teacher_name):
-        text = (
-            '# ' + docker_obj.lab.name +
-            '\n#' +
-            '\n# VERSION    0.0.1' +
-            '\n' +
-            '\nFROM ' + docker_namespace + '/' + docker_obj.lab.name +
-            '\nMAINTAINER Guo Xu <ggxx120@gmail.com>' +
-            '\n' +
-            '\nRUN echo -ne "' + private_key.replace("\n", "\\n") + '" > /root/.ssh/id_rsa;\\' +
-            '\n  echo "' + public_key + '" > /root/.ssh/id_rsa.pub;\\' +
-            '\n  chmod 0600 /root/.ssh/id_rsa ;\\' +
-            '\n  git config --global user.name "' + user_name + '" ;\\' +
-            '\n  git config --global user.email "' + user_email + '" ;\\' +
-            '\n  echo -ne "StrictHostKeyChecking no\\nUserKnownHostsFile /dev/null\\n" >> /etc/ssh/ssh_config ;\\' +
-            '\n  mkdir /' + docker_obj.lab.name + ' ;\\' +
-            '\n  cd /' + docker_obj.lab.name + ' ;\\' +
-            '\n  git init ;\\' +
-            '\n  wget -q -O /' + docker_obj.lab.name + '/archive.tar.gz http://' + git_host + ':' + str(git_port) + '/' + teacher_name + '/' + docker_obj.lab.project + '/repository/archive.tar.gz ;\\' +
-            '\n  tar -xzf /' + docker_obj.lab.name + '/archive.tar.gz -C /' + docker_obj.lab.name + '/ ;\\' +
-            '\n  cp -r /' + docker_obj.lab.name + '/' + docker_obj.lab.project + '.git/* /' + docker_obj.lab.name + '/ ;\\' +
-            '\n  rm -r /' + docker_obj.lab.name + '/' + docker_obj.lab.project + '.git ;\\' +
-            '\n  rm /' + docker_obj.lab.name + '/archive.tar.gz ;\\' +
-            '\n  cd /' + docker_obj.lab.name + ' ;\\' +
-            '\n  git add . ;\\' +
-            '\n  git remote add origin git@' + git_host + ':' + user_name + '/' + docker_obj.lab.name + '.git ;\\' +
-            '\n  git commit -a -s -m "init" ;\\' +
-            '\n  git push -u origin master ;' +
-            '\n' +
-            '\n EXPOSE 8080' +
-            '\n ENTRYPOINT ["tty.js", "--config", "/ttyjs-config.py"]',)
-        self.logger.info(text[0])
-        return text[0]
-
     def _create_ucore_docker_file(self, docker_obj, private_key, public_key, user_name, user_pwd, user_email, git_host, git_port, docker_namespace, teacher_name):
         text = (
             '# ' + docker_obj.name +

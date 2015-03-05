@@ -22,7 +22,9 @@ function UcRtcXBlock(runtime, element) {
 
     function getNameCallback(result) {
         var studentName = result.username;
-        rtc.socket.emit('bind', {username: studentName});
+        if (rtc != null) {
+            rtc.socket.emit('bind', {username: studentName});
+        }
     }
 }
 

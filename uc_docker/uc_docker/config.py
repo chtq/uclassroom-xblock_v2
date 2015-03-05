@@ -3,28 +3,37 @@ class Config:
     CONFIG = {
         "GIT":
         {
+            # GitLab's host and port, make sure open-edx can access
             "HOST" : "192.168.0.191",
             "PORT" : 80,
+
+            # GitLab admin account's token
             "ADMIN_TOKEN": "yzH18DzzyEekAVYkroAe",
-            # "ADMIN_TOKEN": "dZvpAyzBx--P4GiQ4T6K",
+
+            # Teacher account information, be used to create repo/project
             "TEACHER":
             {
-                "NAME": "",
                 "TOKEN": "GzHEiRsg1aCSApDDZMFZ"
-                # "TOKEN": "MYXs-ghGrsv-5_T_EMyv"
             }
         },
+
         "DOCKER":
         {
+            # Default docker image's namespace, for example, "mynamespace/mydocker1"
             "NAMESPACE": "uclassroom",
+
+            # Container's host, may be same as docker server's host,
+            # could be visited by students' browsers
             "HOST"   : "uClassroom",
+
+            # URL and TLS information of remote docker server
             "REMOTE_API":
             {
-                "URL"    : "https://uClassroom:2376",
-                "CA"     : "/home/ggxx/.docker/ca.pem",
-                "CERT"   : "/home/ggxx/.docker/cert.pem",
-                "KEY"    : "/home/ggxx/.docker/key.pem",
-                "VERSION": "1.17"
+                "URL"    : "https://uClassroom:2376",  # url of docker host
+                "CA"     : "/home/ggxx/.docker/ca.pem",  # ca file at local
+                "CERT"   : "/home/ggxx/.docker/cert.pem",  # cert file at local
+                "KEY"    : "/home/ggxx/.docker/key.pem",  # key file at local
+                "VERSION": "1.17"  # docker remote api version
             }
         }
     }

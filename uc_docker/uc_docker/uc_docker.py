@@ -1,6 +1,7 @@
 import json
 import thread
 import datetime
+import re
 
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String, List, Boolean
@@ -138,10 +139,7 @@ class UcDockerXBlock(XBlock):
         return fragment
 
     def studio_view(self, context=None):
-
-        """
-        edit view in studio
-        """
+        # here, studio_view is used to add new lab
         result, message = GitLabUtil.get_user_projects(self.git_host, self.git_port, self.git_teacher_token)
         projects = []
         if result:
@@ -149,11 +147,9 @@ class UcDockerXBlock(XBlock):
                 for project in json.loads(message):
                     projects.append(project["name"])
             except:
-                projects = ["error"]
-
-        self.logger.info("render:")
-        for lab in self.labs:
-            self.logger.info(lab["name"] + ": " + lab["status"])
+                projects = [""]
+        else:
+            projects = [""]
 
         context_dict = {
             "labs": self.labs,
@@ -184,13 +180,20 @@ ENTRYPOINT ["bash"]
         fragment = Fragment()
         fragment.add_content(Util.render_template('static/html/uc_message.html', context_dict))
         fragment.add_css(Util.load_resource("static/css/uc_docker.css"))
-        fragment.add_javascript(Util.load_resource("static/js/src/uc_docker.js"))
+        fragment.add_javascript(Util.load_resource("static/js/src/uc_null.js"))
         fragment.initialize_js("UcDockerXBlock")
         return fragment
 
     @XBlock.json_handler
     def create_lab(self, data, suffix=""):
-        # TODO: check object
+        if not self.check_obj_name(data["name"]):
+            return {"result": False, "message": "Invalid lab name"}
+
+        if data["project"] == "":
+            return {"result": False, "message": "Invalid project name"}
+
+        if self._get_lab(data["name"]) is not None:
+            return {"result": False, "message": "Lab name exists"}
 
         lab = Lab()
         lab.name = data["name"]
@@ -203,7 +206,7 @@ ENTRYPOINT ["bash"]
         self.labs.append(lab.object_to_dict())
         self.save()
         build_lab_docker_worker(self, lab)
-        # I don't why self.labs cannot be saved/updated in new thread
+        # I don't know why self.labs cannot be saved/updated in new thread
         # thread.start_new_thread(build_lab_docker_worker, (self, lab))
         return {"result": True}
 
@@ -223,8 +226,11 @@ ENTRYPOINT ["bash"]
 
     @XBlock.json_handler
     def create_docker(self, data, suffix=""):
-        print "create_docker"
-        # TODO: check docker
+        if not self.check_obj_name(data["name"]):
+            return {"result": False, "message": "Invalid docker name"}
+
+        if self._get_docker(data["name"]) is not None:
+            return {"result": False, "message": "Docker name exists"}
 
         docker = Docker()
         docker.name = data["name"]
@@ -244,11 +250,7 @@ ENTRYPOINT ["bash"]
         print "run_docker"
         docker = Docker.dict_to_object(self._get_docker(data["name"]))
         docker.status = "starting"
-        for d in self.dockers:
-            if d["name"] == docker.name:
-                self.dockers.remove(d)
-                self.dockers.append(docker.object_to_dict())
-                break
+        self._update_docker(docker)
         self.save()
         thread.start_new_thread(start_student_docker_worker, (self, docker))
         return {"result": True}
@@ -258,11 +260,7 @@ ENTRYPOINT ["bash"]
         print "stop_docker"
         docker = Docker.dict_to_object(self._get_docker(data["name"]))
         docker.status = "stopping"
-        for d in self.dockers:
-            if d["name"] == docker.name:
-                self.dockers.remove(d)
-                self.dockers.append(docker.object_to_dict())
-                break
+        self._update_docker(docker)
         self.save()
         thread.start_new_thread(stop_student_docker_worker, (self, docker))
         return {"result": True}
@@ -273,6 +271,12 @@ ENTRYPOINT ["bash"]
         return [
             ("UcDockerXBlock", """<vertical_demo><uc_docker/></vertical_demo>"""),
         ]
+
+    def check_obj_name(self, obj_name):
+        exp_name = "[a-z]+[a-z0-9_\-]*$"
+        if re.match(exp_name, obj_name) is None:
+            return False
+        return True
 
     def _get_lab(self, name):
         for lab in self.labs:
@@ -310,8 +314,6 @@ ENTRYPOINT ["bash"]
     def lab_changed_callback(self, lab):
         self.logger.info("lab_changed_callback, status:" + lab.status)
         self._update_lab(lab)
-        for lab in self.labs:
-            self.logger.info(lab["name"] + ": " + lab["status"])
         self.save()
 
     def docker_changed_callback(self, docker):
