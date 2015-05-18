@@ -15,11 +15,6 @@
     border: solid 1px #ccc;
 }
 
-.uc_div
-{
-    padding: 10px 0;
-}
-
 .uc_table tbody tr
 {
     border: solid 1px #999;
@@ -42,4 +37,22 @@
     border: solid 1px #666;
     width: 160px;
     text-align: center;
+}
+
+div.uc_panel
+{
+    padding: 5px;
+    border: solid 1px #777;
+}
+
+div.uc_panel_header
+{
+    background-color: Blue;
+    color: White;
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+div.uc_panel_content
+{
 }

@@ -16,7 +16,7 @@ function UcDockerXBlock(runtime, element) {
         if (result.result == true) {
             $("#lab_name_d", element).attr('value', result.name);
             $("#lab_desc_d", element).text(result.desc);
-            $("#lab_project_d", element).val(result.project);
+            $("#lab_project_d", element).text(result.project);
             $("#lab_docker_file_d", element).text(result.dockerfile);
             $("#lab_make_scripts_d", element).text(result.makescripts);
         }

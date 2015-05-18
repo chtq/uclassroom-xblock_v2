@@ -12,6 +12,7 @@ class Docker(object):
         self._container_id = ""
         self._host = ""
         self._port = 0
+        self._vnc = 0
 
     def object_to_dict(self):
         dic = dict(
@@ -22,7 +23,8 @@ class Docker(object):
             status=self._status,
             container_id=self._container_id,
             host=self._host,
-            port=self._port)
+            port=self._port,
+            vnc=self._vnc)
         return dic
 
     @staticmethod
@@ -36,6 +38,7 @@ class Docker(object):
         obj.container_id = dic["container_id"]
         obj.host = dic["host"]
         obj.port = dic["port"]
+        obj.vnc = dic["vnc"]
         return obj
 
     def get_name(self):
@@ -86,6 +89,12 @@ class Docker(object):
     def set_port(self, value):
         self._port = value
 
+    def get_vnc(self):
+        return self._vnc
+
+    def set_vnc(self, value):
+        self._vnc = value
+
     name = property(get_name, set_name)
     lab = property(get_lab, set_lab)
     creation_time = property(get_creation_time, set_creation_time)
@@ -94,6 +103,7 @@ class Docker(object):
     container_id = property(get_container_id, set_container_id)
     host = property(get_host, set_host)
     port = property(get_port, set_port)
+    vnc = property(get_vnc, set_vnc)
 
 
 class Lab(object):

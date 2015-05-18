@@ -68,10 +68,12 @@ class DockerHelper(object):
 
     def start_student_docker(self, docker_obj):
         print "DockerHelper.start_student_docker"
-        self._client.start(docker_obj.container_id, port_bindings={8080: ("0.0.0.0", )})
+        self._client.start(docker_obj.container_id, port_bindings={6080: ("0.0.0.0", ), 8080: ("0.0.0.0",)})
         port = self._client.port(docker_obj.container_id, 8080)
+        vnc = self._client.port(docker_obj.container_id, 6080)
         docker_obj.host = self._host
         docker_obj.port = port[0]["HostPort"]
+        docker_obj.vnc = vnc[0]["HostPort"]
         docker_obj.last_start_time = datetime.datetime.strftime(datetime.datetime.today(), "%Y-%m-%d %H:%M:%S")
         self.logger.info("DockerHelper.start_student_docker.complete")
 
@@ -82,38 +84,33 @@ class DockerHelper(object):
 
     def _create_ucore_docker_file(self, docker_obj, private_key, public_key, user_name, user_pwd, user_email, git_host, git_port, docker_namespace, teacher_name):
         text = (
-            '# ' + docker_obj.name +
-            '\n#' +
-            '\n# VERSION    0.0.1' +
-            '\n' +
-            '\nFROM ' + docker_namespace + '/' + docker_obj.lab.name +
-            '\nMAINTAINER Guo Xu <ggxx120@gmail.com>' +
+            'FROM ' + docker_namespace + '/' + docker_obj.lab.name +
+            '\nMAINTAINER ggxx<ggxx120@gmail.com>' +
             '\n' +
             '\nRUN echo -ne "' + private_key.replace("\n", "\\n") + '" > /root/.ssh/id_rsa;\\' +
             '\n  echo "' + public_key + '" > /root/.ssh/id_rsa.pub;\\' +
             '\n  chmod 0600 /root/.ssh/id_rsa ;\\' +
+            '\n  echo -ne "' + self.startup_shell + '" > /startup.sh;\\' +
+            '\n  chmod +x /startup.sh;\\' +
             '\n  echo -ne "' + self.tty_config.format(user_name, user_pwd).replace("\n", "\\n") + '" > /opt/ttyjs/ttyjs-config.json;\\' +
+            '\n  echo ' + user_pwd + ' | echo $(vncpasswd -f) > /root/.vnc/passwd;\\' +
+            '\n  chmod 0600 /root/.vnc/passwd;\\' +
             '\n  git config --global user.name "' + user_name + '" ;\\' +
             '\n  git config --global user.email "' + user_email + '" ;\\' +
             '\n  echo -ne "StrictHostKeyChecking no\\nUserKnownHostsFile /dev/null\\n" >> /etc/ssh/ssh_config ;\\' +
-            '\n  mkdir /' + docker_obj.lab.name + ' ;\\' +
-            '\n  cd /' + docker_obj.lab.name + ' ;\\' +
-            '\n  git init ;\\' +
-            '\n  wget -q -O /' + docker_obj.lab.name + '/archive.tar.gz http://' + git_host + ':' + str(git_port) + '/' + teacher_name + '/' + docker_obj.lab.project + '/repository/archive.tar.gz ;\\' +
-            '\n  tar -xzf /' + docker_obj.lab.name + '/archive.tar.gz -C /' + docker_obj.lab.name + '/ ;\\' +
-            '\n  cp -r /' + docker_obj.lab.name + '/' + docker_obj.lab.project + '.git/* /' + docker_obj.lab.name + '/ ;\\' +
-            '\n  rm -r /' + docker_obj.lab.name + '/' + docker_obj.lab.project + '.git ;\\' +
-            '\n  rm /' + docker_obj.lab.name + '/archive.tar.gz ;\\' +
-            '\n  cd /' + docker_obj.lab.name + ' ;\\' +
-            '\n  git add . ;\\' +
-            '\n  git remote add origin git@' + git_host + ':' + user_name + '/' + docker_obj.name + '.git ;\\' +
-            '\n  git commit -a -s -m "init" ;\\' +
-            '\n  git push -u origin master ;' +
+            '\n  cd /my_lab/ ;\\' +
+            '\n  git remote remove origin; \\' +
+            '\n  git remote add origin git@' + git_host + ':' + user_name + '/' + docker_obj.name + '.git; \\'
+            '\n  git push -u origin master' +
             '\n' +
-            '\n EXPOSE 8080' +
-            '\n ENTRYPOINT ["tty.js", "--config", "/opt/ttyjs/ttyjs-config.json"]',)
+            '\nEXPOSE 6080' +
+            '\nEXPOSE 8080' +
+            '\nENTRYPOINT ["/startup.sh"]',)
         self.logger.info(text[0])
         return text[0]
+
+    startup_shell = """#!/usr/bin/env bash
+(vncserver && /opt/noVNC/utils/launch.sh --vnc localhost:5901) & tty.js --config /opt/ttyjs/ttyjs-config.json"""
 
     tty_config = """{{
   \\"users\\": {{ \\"{0}\\": \\"{1}\\" }},
@@ -142,7 +139,7 @@ class DockerHelper(object):
       \\"#cc0000\\",
       \\"#4e9a06\\",
       \\"#c4a000\\",
-      \\\"#3465a4\\",
+      \\"#3465a4\\",
       \\"#75507b\\",
       \\"#06989a\\",
       \\"#d3d7cf\\",

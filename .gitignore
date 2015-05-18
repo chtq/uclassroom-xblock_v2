@@ -132,3 +132,4 @@ build/Release
 node_modules
 
 *~
+scripts/certs/

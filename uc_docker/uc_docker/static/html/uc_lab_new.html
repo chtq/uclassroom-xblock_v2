@@ -9,12 +9,8 @@
         </li>
         <li class="field comp-setting-entry is-set">
             <div class="wrapper-comp-setting">
-                <label class="label setting-label" for="lab_project">Git Project</label>
-                <select class="input setting-input" name="lab_project" id="lab_project" required="required">
-                    {% for project in projects %}
-                    <option value="{{ project }}">{{ project }}</option>
-                    {% endfor %}
-                </select>
+                <label class="label setting-label" for="lab_name">Git Repo</label>
+                <input class="input setting-input" type="text" id="lab_project" name="lab_project" required="required" value="" />
             </div>
             <span class="tip setting-help"></span>
         </li>
@@ -30,7 +26,7 @@
                 <label class="label setting-label" for="lab_docker_file">Dockerfile</label>
                 <textarea class="input setting-input setting-textarea" id="lab_docker_file" name="lab_docker_file" rows="15">{{ docker_file }}</textarea>
             </div>
-            <span class="tip setting-help">Your docker must FROM uclassroom/ucore-base.</span>
+            <span class="tip setting-help">Your docker must FROM uclassroom/ucore-vnc-base.</span>
         </li>
         <li class="field comp-setting-entry is-set">
             <div class="wrapper-comp-setting">

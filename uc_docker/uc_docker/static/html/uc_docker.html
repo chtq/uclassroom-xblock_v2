@@ -1,46 +1,49 @@
 <div class="uc_docker_block container uc_xblock">
     <h2>Dockers Management</h2>
-    <div class="uc_div">
-        <h3>Dockers List</h3>
-        <table class="uc_table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Lab</th>
-                    <th>Built Date</th>
-                    <th>Operation</th>
-                </tr>
-            </thead>
-            <tfoot></tfoot>
-            <tbody>
-                {% for docker in dockers %}
-                <tr>
-                    <td>{{ docker.name }}</td>
-                    <td>{{ docker.lab.name }}</td>
-                    <td>{{ docker.creation_time }}</td>
-                    <td>
-                        {% if docker.status == "ready" %}
-                        <a href="javascript:void(0);" class="btn start_docker_btn btn-info btn-sm" name="{{ docker.name }}">Start</a>
-                        {% elif docker.status == "running" %}
-                        <a href="javascript:void(0);" class="btn stop_docker_btn btn-info btn-sm" name="{{ docker.name }}">Stop</a>
-                        <a href="http://{{ docker.host }}:{{ docker.port }}/" target="_blank" class="btn docker_terminal_btn btn-info btn-sm" name="{{ docker.name }}">Terminal</a>
-                        {% else %}
-                        {{ docker.status }}
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="uc_panel">
+        <div class="uc_panel_header">Dockers List</div>
+        <div class="uc_panel_content">
+            <table class="uc_table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Lab</th>
+                        <th>Built Date</th>
+                        <th>Operation</th>
+                    </tr>
+                </thead>
+                <tfoot></tfoot>
+                <tbody>
+                    {% for docker in dockers %}
+                    <tr>
+                        <td>{{ docker.name }}</td>
+                        <td>{{ docker.lab.name }}</td>
+                        <td>{{ docker.creation_time }}</td>
+                        <td>
+                            {% if docker.status == "ready" %}
+                            <a href="javascript:void(0);" class="btn start_docker_btn btn-info btn-sm" name="{{ docker.name }}">Start</a>
+                            {% elif docker.status == "running" %}
+                            <a href="javascript:void(0);" class="btn stop_docker_btn btn-info btn-sm" name="{{ docker.name }}">Stop</a>
+                            <a href="http://{{ docker.host }}:{{ docker.port }}/" target="_blank" class="btn docker_terminal_btn btn-info btn-sm" name="{{ docker.name }}">Terminal</a>
+                            <a href="http://{{ docker.host }}:{{ docker.vnc }}/vnc_auto.html" target="_blank" class="btn docker_vnc_btn btn-info btn-sm" name="{{ docker.name }}">VNC</a>
+                            {% else %}
+                            {{ docker.status }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div class="uc_div">
-        <h3>Docker Tips</h3>
-        <br />
-        <label>Docker Name: [LOGIN_NAME]</label>
-        <br />
-        <label>Docker password: {{ password }}</label>
+    <div class="uc_panel">
+        <div class="uc_panel_header">Docker Tips</div>
+        <div class="uc_panel_content">
+            <label>Name: {{ username }}</label>
+            <label>Password: {{ password }}</label>
+        </div>
     </div>
-    <div class="uc_div">
+    <div class="uc_panel">
         <h3>Docker Creation</h3>
         <div>
             <label for="docker_name">Docker Name</label>

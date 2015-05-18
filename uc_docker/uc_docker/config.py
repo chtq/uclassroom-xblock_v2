@@ -20,7 +20,7 @@ class Config:
         "DOCKER":
         {
             # Default docker image's namespace, for example, "mynamespace/mydocker1"
-            "NAMESPACE": "uclassroom",
+            "NAMESPACE": "uclassroomxb",
 
             # Container's host, may be same as docker server's host,
             # could be visited by students' browsers

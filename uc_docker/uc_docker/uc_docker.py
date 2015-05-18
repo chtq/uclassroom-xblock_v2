@@ -57,13 +57,8 @@ class UcDockerXBlock(XBlock):
             if not result:
                 return self.message_view("Error in uc_docker (get git projects)", "Cannot get user's projects in git", context)
 
-            projects = []
-            for project in json.loads(message):
-                projects.append(project["name"])
-
             context_dict = {
                 "labs": self.labs,
-                "projects": projects,
                 "message": ""
             }
             fragment = Fragment()
@@ -129,6 +124,7 @@ class UcDockerXBlock(XBlock):
             "labs": self._get_available_labs(),
             "dockers": self.dockers,
             "password": self.git_password,
+            "username": username,
             "message": ""
         }
         fragment = Fragment()
@@ -139,28 +135,13 @@ class UcDockerXBlock(XBlock):
         return fragment
 
     def studio_view(self, context=None):
-        # here, studio_view is used to add new lab
-        result, message = GitLabUtil.get_user_projects(self.git_host, self.git_port, self.git_teacher_token)
-        projects = []
-        if result:
-            try:
-                for project in json.loads(message):
-                    projects.append(project["name"])
-            except:
-                projects = [""]
-        else:
-            projects = [""]
-
+        # to add new lab
         context_dict = {
             "labs": self.labs,
-            "projects": projects,
-            "docker_file": """#        teacher/lab
-#
-#        VERSION 0.0.1
+            "docker_file": """FROM uclassroom/ucore-vnc-base
+MAINTAINER ggxx<ggxx120@gmail.com>
 
-FROM uclassroom/ucore-base
-MAINTAINER Guo Xu <ggxx120@gmail.com>
-
+RUN cd / && git clone https://github.com/chyyuu/ucore_lab.git my_lab.git && git remote remove
 ENTRYPOINT ["bash"]
 """,
             "message": ""

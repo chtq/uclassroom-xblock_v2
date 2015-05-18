@@ -3,7 +3,7 @@ Deployment
 
 ### GitLab Server
 * Enable sign up
-Edit file `<gitlab_path>/config/gitlab.yml`, set:
+  Edit file `<gitlab_path>/embedded/service/gitlab-rails/config/gitlab.yml`, set:
 ```
 sigup_enabled: true
 ```
@@ -15,10 +15,7 @@ sigup_enabled: true
 
 ### Docker Server
 * Create your own TLS keys with OpenSSL if you don't have any  
-  Here are some useful links:  
-  http://docs.docker.com/articles/https/  
-  http://longgeek.com/2014/09/14/docker-using-https/  
-* Then you will get at least five pem files: `ca.pem`, `server-cert.pem`, `server-key.pem`, `cert.pem` and `key.pem`  
+* Run `sh scripts/pemgen.sh`, you will get pem files: `ca.pem`, `server-cert.pem`, `server-key.pem`, `cert.pem` and `key.pem`  
 * To start docker daemon, use:  
 ```
 $sudo docker -d --tlscacert=<ca.pem> --tlscert=<server-cert.pem> --tlskey=<server-key.pem> -H=0.0.0.0:2376
