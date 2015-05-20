@@ -90,7 +90,7 @@ class DockerHelper(object):
             '\nRUN echo -ne "' + private_key.replace("\n", "\\n") + '" > /root/.ssh/id_rsa;\\' +
             '\n  echo "' + public_key + '" > /root/.ssh/id_rsa.pub;\\' +
             '\n  chmod 0600 /root/.ssh/id_rsa ;\\' +
-            '\n  echo -ne "' + self.startup_shell + '" > /startup.sh;\\' +
+            '\n  echo -ne "' + self.startup_shell.replace("\n", "\\n") + '" > /startup.sh;\\' +
             '\n  chmod +x /startup.sh;\\' +
             '\n  echo -ne "' + self.tty_config.format(user_name, user_pwd).replace("\n", "\\n") + '" > /opt/ttyjs/ttyjs-config.json;\\' +
             '\n  echo ' + user_pwd + ' | echo $(vncpasswd -f) > /root/.vnc/passwd;\\' +
@@ -99,7 +99,6 @@ class DockerHelper(object):
             '\n  git config --global user.email "' + user_email + '" ;\\' +
             '\n  echo -ne "StrictHostKeyChecking no\\nUserKnownHostsFile /dev/null\\n" >> /etc/ssh/ssh_config ;\\' +
             '\n  cd /my_lab/ ;\\' +
-            '\n  git remote remove origin; \\' +
             '\n  git remote add origin git@' + git_host + ':' + user_name + '/' + docker_obj.name + '.git; \\'
             '\n  git push -u origin master' +
             '\n' +
