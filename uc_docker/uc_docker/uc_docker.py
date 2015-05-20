@@ -141,7 +141,7 @@ class UcDockerXBlock(XBlock):
             "docker_file": """FROM uclassroom/ucore-vnc-base
 MAINTAINER ggxx<ggxx120@gmail.com>
 
-RUN cd / && git clone https://github.com/chyyuu/ucore_lab.git my_lab.git && git remote remove
+RUN cd / && git clone https://github.com/chyyuu/ucore_lab.git my_lab && cd /my_lab/ && git remote remove origin
 ENTRYPOINT ["bash"]
 """,
             "message": ""
@@ -169,9 +169,6 @@ ENTRYPOINT ["bash"]
     def create_lab(self, data, suffix=""):
         if not self.check_obj_name(data["name"]):
             return {"result": False, "message": "Invalid lab name"}
-
-        if data["project"] == "":
-            return {"result": False, "message": "Invalid project name"}
 
         if self._get_lab(data["name"]) is not None:
             return {"result": False, "message": "Lab name exists"}
