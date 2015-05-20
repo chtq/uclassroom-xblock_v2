@@ -118,6 +118,8 @@ class UcDockerXBlock(XBlock):
             self.is_new = False
         else:
             # TODO update git account
+            student = self.runtime.get_real_user(self.runtime.anonymous_student_id)
+            username = student.username
             print 'OK'
 
         context_dict = {
