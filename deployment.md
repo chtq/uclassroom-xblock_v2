@@ -6,6 +6,7 @@
 
 
 ### Docker 服务器
+* 安装docker
 * 创建密钥
   编辑脚本`scripts/pemgen.sh`，设置环境变量`UC_DOMAIN`为Docker服务器的域名  
   执行脚本`scripts/pemgen.sh`，然后将会在`scripts/certs`文件夹下看到生成的若干密钥
@@ -46,7 +47,7 @@ $npm install
 
 
 ### Open edX 服务器
-* 安装Open edX，请参考[这里](http://docs.docker.com/installation/ubuntulinux/#ubuntu-precise-1204-lts-64-bit)  
+* 在Open edX服务器上安装docker，请参考[这里](http://docs.docker.com/installation/ubuntulinux/#ubuntu-precise-1204-lts-64-bit)  
 
 
 ### uc_rtc XBlock
