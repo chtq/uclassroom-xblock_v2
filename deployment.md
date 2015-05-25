@@ -1,88 +1,87 @@
-Deployment
+部署
 ========
 
-### GitLab Server
-* Enable sign up
-  Edit file `<gitlab_path>/embedded/service/gitlab-rails/config/gitlab.yml`, set:
-```
-sigup_enabled: true
-```
-* Disable email confirmation  
-  Edit file `<gitlab_path>/embedded/service/gitlab-rails/app/models/user.rb`, comment `confirmable ` after `devise` section  
-  Edit file `<gitlab_path>/embedded/service/gitlab-rails/app/views/devise/sessions/new.html.haml`, comment the HTML tag which contains `new_confirmation_path(resource_name)`
-* Create teacher account and build labs' projects. Make sure projects are public
-* Reboot
+### GitLab 服务器
+* 允许用户注册后不需要验证邮件即可登录  
 
-### Docker Server
-* Create your own TLS keys with OpenSSL if you don't have any  
-* Run `sh scripts/pemgen.sh`, you will get pem files: `ca.pem`, `server-cert.pem`, `server-key.pem`, `cert.pem` and `key.pem`  
-* To start docker daemon, use:  
+
+### Docker 服务器
+* 创建密钥
+  编辑脚本`scripts/pemgen.sh`，设置环境变量`UC_DOMAIN`为Docker服务器的域名  
+  执行脚本`scripts/pemgen.sh`，然后将会在`scripts/certs`文件夹下看到生成的若干密钥
+* 使用以下命令，启动Docker服务：  
 ```
-$sudo docker -d --tlscacert=<ca.pem> --tlscert=<server-cert.pem> --tlskey=<server-key.pem> -H=0.0.0.0:2376
+$sudo docker -d --tlsverify --tlscacert=<ca.pem> --tlscert=<server-cert.pem> --tlskey=<server-key.pem> -H=0.0.0.0:2376
+```
+* 访问Docker服务器，添加默认镜像，在`scripts`目录下找到Dockerfile文件，执行： 
+```
+$sudo docker --tlsverify -H=<docker-server>:<port> --tlscacert=<ca.pem> --tlscert=<cert.pem> --tlskey=<key.pem> pull docker.io/fedora
+```
+```
+$sudo docker --tlsverify -H=<docker-server>:<port> --tlscacert=<ca.pem> --tlscert=<cert.pem> --tlskey=<key.pem> build --rm -t uclassroom/ucore-vnc-base .
 ```
 
-### Node.js Server
-* To install `node.js` and `npm`, use:  
+
+### Node.js 服务器
+* 安装 `node.js` 和 `npm`：  
 ```
 $sudo yum install nodejs, npm
 ```  
-, or  
+  ，或者  
 ```
 $sudo apt-get install nodejs, npm
 ```  
-* In rtc_node folder, to install node modules, use:  
+* 进入 `rtc_node` 文件夹下， 执行以下命令，安装子模块：  
 ```
 $npm install
 ```  
-* Edit file `config.json`, its default parameters are:  
+* 编辑文件 `config.json`， 其默认参数为：  
 ```
 {
 "PORT": 1986,
 "MAX_USER_NUM_OF_ROOM": 2
 }
 ```
-* Use `$node app.js` to start node.js server listening
+* 使用 `$node app.js` 启动Node.js监听服务
 
-### OpenEDX Server
-* To install docker, please visit http://docs.docker.com/installation/ubuntulinux/#ubuntu-precise-1204-lts-64-bit
-* Set environment variable  
-```
-DOCKER_HOST=tcp://docker_server_domain:2376
-```  
+
+### Open edX 服务器
+* 安装Open edX，请参考[这里](http://docs.docker.com/installation/ubuntulinux/#ubuntu-precise-1204-lts-64-bit)  
+
 
 ### uc_rtc XBlock
-* Edit file `uc_rtc/uc_rtc/static/js/src/static.js`, set SOCKET_IO_URL:  
+* 编辑文件 `uc_rtc/uc_rtc/static/js/src/static.js`， 设置全局变量 `SOCKET_IO_URL`：  
 ```
 var SOCKET_IO_URL = 'http://<node.server.host>:<port>';
 ```
-* To install uc_rtc XBlock on open-edx server, , use:  
+* 执行以下命令安装 uc_rtc XBlock：  
 ```
 $sudo -u edxapp /edx/bin/pip.edxapp install <path_of_uc_rtc>
 ```
-* To restart edxapp service, use:  
+* 重启edxapp服务:  
 ```
 $sudo /edx/bin/supervisorctl -c /edx/etc/supervisord.conf restart edxapp:
 ```
 
+
 ### uc_docker XBlock
-* Edit file `uc_docker/uc_docker/config.py`, set your own configuration
-* To install uc_docker XBlock on open-edx server, use:  
+* 编辑文件 `uc_docker/uc_docker/config.py`, 配置参数
+* 执行以下命令安装 uc_docker XBlock：  
 ```
 $sudo -u edxapp /edx/bin/pip.edxapp install <path_of_uc_docker>
 ```
-* To restart edxapp service, use:  
+* 重启edxapp服务:  
 ```
 $sudo /edx/bin/supervisorctl -c /edx/etc/supervisord.conf restart edxapp:
 ```
 
-### Memos
-* All `<var>` are up to your own environment
-* You can edit `/etc/hosts`, if you don't have domain name, and be careful to make sure your TLS keys are valid.
-* To uninstall uc_rtc or uc_docker, use:  
+### 备注
+* 所有的 `<var>` 取决于你自己的服务器环境
+* 卸载 uc_rtc 和 uc_docker的命令是：  
 ```
 $sudo -u edxapp /edx/bin/pip.edxapp uninstall uc-rtc-xblock
 ```  
-  , or  
+  ，和
 ```
 $sudo -u edxapp /edx/bin/pip.edxapp uninstall uc-docker-xblock
 ```
