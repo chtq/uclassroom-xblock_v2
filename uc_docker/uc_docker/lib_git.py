@@ -1,3 +1,4 @@
+# coding=utf-8
 __author__ = 'ggxx'
 
 import urllib
@@ -164,3 +165,28 @@ class GitLabUtil(object):
             if http_client:
                 http_client.close()
         return result, message
+
+    @staticmethod
+    def update_file(host, port, user_token, project_id):
+        http_client = None
+        try:
+            url = "/api/v3/projects/{0}/repository/files?private_token={1}".format(project_id, user_token)
+            params = urllib.urlencode({"file_path":"hello.c", "branch_name":"master", "content": "it is a test\nnewline汉字", "commit_message":"test commit3"})
+            http_client = GitLabUtil.create_http_client(host, port, "PUT", url, params)
+            result, message = GitLabUtil.handle_response(http_client.getresponse())
+        except Exception, e:
+            print e
+            result = False
+            message = "Error in update_file function"
+        finally:
+            if http_client:
+                http_client.close()
+        return result, message
+
+
+if __name__ == '__main__':
+    user_token = 'xNxCBik71qQBB-K5gBW6'
+    project_id = '6'
+    result, msg= GitLabUtil.update_file('166.111.131.12', 10880, user_token, project_id)
+    print result
+    print msg

@@ -5,7 +5,7 @@
 * 允许用户注册后不需要验证邮件即可登录  
 
 
-### Docker 服务器
+### Docker 服务器(推荐使用CentOS 7)
 * 安装docker
 * 创建密钥
   编辑脚本`scripts/pemgen.sh`，设置环境变量`UC_DOMAIN`为Docker服务器的域名  
@@ -16,14 +16,14 @@ $sudo docker -d --tlsverify --tlscacert=<ca.pem> --tlscert=<server-cert.pem> --t
 ```
 * 访问Docker服务器，添加默认镜像，在`scripts`目录下找到Dockerfile文件，执行： 
 ```
-$sudo docker --tlsverify -H=<docker-server>:<port> --tlscacert=<ca.pem> --tlscert=<cert.pem> --tlskey=<key.pem> pull docker.io/fedora
+$sudo docker --tlsverify -H=<docker-server>:<port> --tlscacert=<ca.pem> --tlscert=<cert.pem> --tlskey=<key.pem> pull docker.io/fedora:21
 ```
 ```
 $sudo docker --tlsverify -H=<docker-server>:<port> --tlscacert=<ca.pem> --tlscert=<cert.pem> --tlskey=<key.pem> build --rm -t uclassroom/ucore-vnc-base .
 ```
 
 
-### Node.js 服务器
+### Node.js 服务器(推荐使用CentOS 7)
 * 安装 `node.js` 和 `npm`：  
 ```
 $sudo yum install nodejs, npm
@@ -46,11 +46,12 @@ $npm install
 * 使用 `$node app.js` 启动Node.js监听服务
 
 
-### Open edX 服务器
+### Open edX 服务器(使用Ubuntu Server 12.04)
+* Open edX安装方法请参考[部署文档](https://github.com/ggxx/code-viewer/blob/master/%E9%83%A8%E7%BD%B2%E6%96%87%E6%A1%A3.md)或[部署文档](https://github.com/xyongcn/code-viewer/blob/master/%E9%83%A8%E7%BD%B2%E6%96%87%E6%A1%A3.md)  
 * 在Open edX服务器上安装docker，请参考[这里](http://docs.docker.com/installation/ubuntulinux/#ubuntu-precise-1204-lts-64-bit)  
 
 
-### uc_rtc XBlock
+### 在Open edX服务器安装XBlock uc_rtc
 * 编辑文件 `uc_rtc/uc_rtc/static/js/src/static.js`， 设置全局变量 `SOCKET_IO_URL`：  
 ```
 var SOCKET_IO_URL = 'http://<node.server.host>:<port>';
@@ -65,7 +66,7 @@ $sudo /edx/bin/supervisorctl -c /edx/etc/supervisord.conf restart edxapp:
 ```
 
 
-### uc_docker XBlock
+### 在Open edX服务器安装XBlock uc_docker
 * 编辑文件 `uc_docker/uc_docker/config.py`, 配置参数
 * 执行以下命令安装 uc_docker XBlock：  
 ```

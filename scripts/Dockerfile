@@ -1,4 +1,4 @@
-FROM docker.io/fedora
+FROM docker.io/fedora:21
 MAINTAINER ggxx120<ggxx120@gmail.com>
 
 RUN yum -y update;\

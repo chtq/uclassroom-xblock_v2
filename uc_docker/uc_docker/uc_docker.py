@@ -8,7 +8,7 @@ from xblock.fields import Scope, Integer, String, List, Boolean
 from xblock.fragment import Fragment
 
 from config import Config
-from lib_docker import DockerHelper
+from lib_docker_raw import DockerRawHelper
 from lib_git import GitLabUtil
 from lib_model import Lab, Docker
 from lib_util import Util
@@ -36,13 +36,14 @@ class UcDockerXBlock(XBlock):
     docker_host = CONFIG["DOCKER"]["HOST"]
     docker_url = CONFIG["DOCKER"]["REMOTE_API"]["URL"]
     docker_namespace = CONFIG["DOCKER"]["NAMESPACE"]
+    docker_mem = CONFIG["DOCKER"]["MEM_LIMIT"]
     ca = CONFIG["DOCKER"]["REMOTE_API"]["CA"]
     cert = CONFIG["DOCKER"]["REMOTE_API"]["CERT"]
     key = CONFIG["DOCKER"]["REMOTE_API"]["KEY"]
     version = CONFIG["DOCKER"]["REMOTE_API"]["VERSION"]
     git_teacher_token = CONFIG["GIT"]["TEACHER"]["TOKEN"]
 
-    docker_helper = DockerHelper(docker_host, docker_url, ca, cert, key, version)
+    docker_helper = DockerRawHelper(docker_host, docker_url, ca, cert, key)
 
     def student_view(self, context=None):
 
@@ -311,7 +312,7 @@ def build_lab_docker_worker(xb, lab):
 
 def build_student_docker_worker(xb, docker, user_name, user_email):
     xb.logger.info("build_student_docker_worker.start")
-    xb.docker_helper.build_student_docker("{0}/{1}".format(user_name, docker.name), docker, xb.private_key, xb.public_key, user_name, xb.git_password, user_email, xb.git_user_token, xb.git_host, xb.git_port, xb.git_teacher_token, xb.docker_namespace)
+    xb.docker_helper.build_student_docker("{0}/{1}".format(user_name, docker.name), docker, xb.private_key, xb.public_key, user_name, xb.git_password, user_email, xb.git_user_token, xb.git_host, xb.git_port, xb.git_teacher_token, xb.docker_namespace, xb.docker_mem)
     docker.status = "ready"
     xb.docker_changed_callback(docker)
 

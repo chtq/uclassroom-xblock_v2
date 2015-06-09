@@ -22,6 +22,9 @@ class Config:
             # Default docker image's namespace, for example, "mynamespace/mydocker1"
             "NAMESPACE": "uclassroomxb",
 
+            # memory for each container
+            "MEM_LIMIT": "256m",
+
             # Container's host, may be same as docker server's host,
             # could be visited by students' browsers
             "HOST"   : "uClassroom",
@@ -30,6 +33,7 @@ class Config:
             "REMOTE_API":
             {
                 "URL"    : "https://uClassroom:2376",  # url of docker host
+                "PORT"   : 2376,                       # port of docker daemon
                 "CA"     : "/home/ggxx/.docker/ca.pem",  # ca file at local
                 "CERT"   : "/home/ggxx/.docker/cert.pem",  # cert file at local
                 "KEY"    : "/home/ggxx/.docker/key.pem",  # key file at local
