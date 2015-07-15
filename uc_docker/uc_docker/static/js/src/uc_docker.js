@@ -4,7 +4,8 @@ function UcDockerXBlock(runtime, element) {
     var createDockerHandlerUrl = runtime.handlerUrl(element, 'create_docker');
     var startDockerHandlerUrl = runtime.handlerUrl(element, 'run_docker');
     var stopDockerHandlerUrl = runtime.handlerUrl(element, 'stop_docker');
-
+    var viewresultHandlerUrl = runtime.handlerUrl(element, 'view_result');
+    
     function jsCallback(response) {
         if (response.result == true) {
             window.location.reload(true);
@@ -12,7 +13,23 @@ function UcDockerXBlock(runtime, element) {
             $('.error-message', element).html('Error: ' + response.message);
         }
     }
+    
+    function resultCallback(response){
+        $('.result', element).html(response.message);
+    }
 
+    $('.view_result_btn', element).click(function(eventObject){
+        params={
+            "name":eventObject.target.name
+        };
+        
+        $.ajax({
+            type: "POST",
+            url: viewresultHandlerUrl,
+            data: JSON.stringify(params),
+            success: resultCallback
+        });
+    });
     $('#create_docker_btn', element).click(function(eventObject) {
         params = {
             "name": $("#docker_name", element).val(),
