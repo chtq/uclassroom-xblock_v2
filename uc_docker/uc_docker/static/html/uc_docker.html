@@ -26,6 +26,7 @@
                             <a href="javascript:void(0);" class="btn stop_docker_btn btn-info btn-sm" name="{{ docker.name }}">Stop</a>
                             <a href="http://{{ docker.host }}:{{ docker.port }}/" target="_blank" class="btn docker_terminal_btn btn-info btn-sm" name="{{ docker.name }}">Terminal</a>
                             <a href="http://{{ docker.host }}:{{ docker.vnc }}/vnc_auto.html" target="_blank" class="btn docker_vnc_btn btn-info btn-sm" name="{{ docker.name }}">VNC</a>
+                            <a href="javascript:void(0);" class="btn view_result_btn btn-info btn-sm" name="{{ docker.name }}">result</a>
                             {% else %}
                             {{ docker.status }}
                             {% endif %}
