@@ -128,7 +128,8 @@ class UcDockerXBlock(XBlock):
             "dockers": self.dockers,
             "password": self.git_password,
             "username": username,
-            "message": ""
+            "message": "",
+            "report":""
         }
         fragment = Fragment()
         fragment.add_content(Util.render_template('static/html/uc_docker.html', context_dict))
@@ -205,6 +206,18 @@ ENTRYPOINT ["bash"]
                     "makescripts": l["make_scripts"]}
         return {"result": False}
 
+    @XBlock.json_handler
+    def view_result(self, data, suffix=""):
+        student = self.runtime.get_real_user(self.runtime.anonymous_student_id)
+        user_name = student.username
+        
+        dockername=data["name"]
+        conn = pymongo.Connection('192.168.122.115', 27017)
+        db = conn.test
+        user = db.user
+        result = user.find_one({"username":user_name, "dockername":dockername})
+        conn.disconnect()
+        return {"message": result["result"]}
     @XBlock.json_handler
     def create_docker(self, data, suffix=""):
         if not self.check_obj_name(data["name"]):
