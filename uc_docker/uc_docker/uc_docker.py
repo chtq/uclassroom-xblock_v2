@@ -313,7 +313,7 @@ ENTRYPOINT ["bash"]
         user_email = student.email
         user_name = student.username
 
-        conn=pymongo.Connection('192.168.122.115', 27017)
+        conn=pymongo.Connection('192.168.122.183', 27017)
         db = conn.test
         token=db.token
         result = token.find_one({"username":user_name})
