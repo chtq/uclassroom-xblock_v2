@@ -4,7 +4,7 @@ class Config:
         "GIT":
         {
             # GitLab's host and port, make sure open-edx can access
-            "HOST" : "192.168.122.102",
+            "HOST" : "192.168.122.5",
             "PORT" : 80,
 
             # GitLab admin account's token
