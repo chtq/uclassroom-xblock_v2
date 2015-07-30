@@ -112,7 +112,7 @@ class UcDockerXBlock(XBlock):
                 self.private_key, self.public_key = Util.gen_ssh_keys(email)
                 self.logger.info("private_key:" + self.private_key)
                 self.save()
-                conn=pymongo.Connection('192.168.122.115', 27017)
+                conn=pymongo.Connection('192.168.122.183', 27017)
                 db = conn.test
                 token=db.token
                 token.insert({"username":username,"token":message["private_token"],"password":self.git_password,"private_key":self.private_key,"public_key":self.public_key})
