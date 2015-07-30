@@ -4,39 +4,39 @@ class Config:
         "GIT":
         {
             # GitLab's host and port, make sure open-edx can access
-            "HOST" : "192.168.0.191",
+            "HOST" : "192.168.122.102",
             "PORT" : 80,
 
             # GitLab admin account's token
-            "ADMIN_TOKEN": "yzH18DzzyEekAVYkroAe",
+            "ADMIN_TOKEN": "NqTT2HZSs7-gJqp1RSR7",
 
             # Teacher account information, be used to create repo/project
             "TEACHER":
             {
-                "TOKEN": "GzHEiRsg1aCSApDDZMFZ"
+                "TOKEN": "X1Ua_uPpyijshQX-gPDs"
             }
         },
 
         "DOCKER":
         {
             # Default docker image's namespace, for example, "mynamespace/mydocker1"
-            "NAMESPACE": "uclassroomxb",
+            "NAMESPACE": "uclassroom",
 
             # memory for each container
             "MEM_LIMIT": "256m",
 
             # Container's host, may be same as docker server's host,
             # could be visited by students' browsers
-            "HOST"   : "uClassroom",
+            "HOST"   : "mooc.enight.me",
 
             # URL and TLS information of remote docker server
             "REMOTE_API":
             {
-                "URL"    : "https://uClassroom:2376",  # url of docker host
+                "URL"    : "2376",  # url of docker host
                 "PORT"   : 2376,                       # port of docker daemon
-                "CA"     : "/home/ggxx/.docker/ca.pem",  # ca file at local
-                "CERT"   : "/home/ggxx/.docker/cert.pem",  # cert file at local
-                "KEY"    : "/home/ggxx/.docker/key.pem",  # key file at local
+                "CA"     : "/home/moocedx/.docker/ca.pem",  # ca file at local
+                "CERT"   : "/home/moocedx/.docker/cert.pem",  # cert file at local
+                "KEY"    : "/home/moocedx/.docker/key.pem",  # key file at local
                 "VERSION": "1.17"  # docker remote api version
             }
         }

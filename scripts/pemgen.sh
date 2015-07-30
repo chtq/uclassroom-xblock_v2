@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -ex
-export UC_DOMAIN=north.cs.tsinghua.edu.cn
+export UC_DOMAIN=mooc.enight.me
 
 [ -e certs ] || mkdir certs
 cd certs

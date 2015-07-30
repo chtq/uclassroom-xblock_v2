@@ -24,9 +24,11 @@ class DockerRawHelper(object):
     def build_lab_docker(self, image_name, dockerfile_text):
         dockerfile_path = self._create_tmp_dockerfile(dockerfile_text)
         cmd = "docker --tlsverify --tlscacert={0} --tlscert={1} --tlskey={2} -H={3}:{4} build --rm -t {5} {6}"
+        
         cmd = cmd.format(self._ca, self._cert, self._key, self._host, self._port, image_name, dockerfile_path)
+        self.logger.info(cmd)
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        (std_output, err_output) = process.communicate(timeout=60*10)
+        (std_output, err_output) = process.communicate()#timeout=60*10)
         if err_output != '':
             return 1
         return 0
@@ -47,21 +49,24 @@ class DockerRawHelper(object):
         result, message = GitLabUtil.create_private_project(git_host, git_port, user_token, project_name)
         if not result:
             self.logger.info(message)
+            self.logger.info("hhhhhhhhhhhhh1")
             return 4
         result, message = GitLabUtil.add_project_developer(git_host, git_port, user_token, user_name, project_name, teacher_id)
         if not result:
             self.logger.info(message)
+            self.logger.info("hhhhhhhhhhhhhh2")
             return 5
         cmd = "docker --tlsverify --tlscacert={0} --tlscert={1} --tlskey={2} -H={3}:{4} build --rm -t {5} {6}"
         cmd = cmd.format(self._ca, self._cert, self._key, self._host, self._port, image_name, dockerfile_path)
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        (std_output, err_output) = process.communicate(timeout=60*5)
+        (std_output, err_output) = process.communicate()#timeout=60*5)
         if err_output != '':
             return 6
         cmd = "docker --tlsverify --tlscacert={0} --tlscert={1} --tlskey={2} -H={3}:{4} create -p :8080 -p :6080 -m {5} {6}"
         cmd = cmd.format(self._ca, self._cert, self._key, self._host, self._port, mem_limit, image_name)
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        (std_output, err_output) = process.communicate(timeout=15)
+        (std_output, err_output) = process.communicate()#timeout=15)
+        docker.container_id = std_output
         if err_output != '':
             return 7
         docker.container_id = std_output
@@ -70,14 +75,16 @@ class DockerRawHelper(object):
     def start_student_docker(self, docker):
         cmd = "docker --tlsverify --tlscacert={0} --tlscert={1} --tlskey={2} -H={3}:{4} start {5}"
         cmd = cmd.format(self._ca, self._cert, self._key, self._host, self._port, docker.container_id)
+        self.logger.info(cmd)
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        (std_output, err_output) = process.communicate(timeout=15)
+        (std_output, err_output) = process.communicate()#timeout=15)
         if err_output != '':
             return 1
         cmd = "docker --tlsverify --tlscacert={0} --tlscert={1} --tlskey={2} -H={3}:{4} port {5}"
         cmd = cmd.format(self._ca, self._cert, self._key, self._host, self._port, docker.container_id)
+        self.logger.info(cmd)
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        (std_output, err_output) = process.communicate(timeout=15)
+        (std_output, err_output) = process.communicate()#timeout=15)
         if err_output != '':
             return 2
         docker.last_start_time = datetime.datetime.strftime(datetime.datetime.today(), "%Y-%m-%d %H:%M:%S")
@@ -95,8 +102,9 @@ class DockerRawHelper(object):
     def stop_student_docker(self, docker):
         cmd = "docker --tlsverify --tlscacert={0} --tlscert={1} --tlskey={2} -H={3}:{4} stop {5}"
         cmd = cmd.format(self._ca, self._cert, self._key, self._host, self._port, docker.container_id)
+        self.logger.info(cmd)
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        (std_output, err_output) = process.communicate(timeout=15)
+        (std_output, err_output) = process.communicate()#timeout=15)
         if err_output != '':
             return 1
         return 0
@@ -138,6 +146,7 @@ class DockerRawHelper(object):
         return text[0]
 
     _startup_shell = """#!/usr/bin/env bash
+vncserver -kill :1
 (vncserver && /opt/noVNC/utils/launch.sh --vnc localhost:5901) & tty.js --config /opt/ttyjs/ttyjs-config.json"""
 
     _tty_config = """{{

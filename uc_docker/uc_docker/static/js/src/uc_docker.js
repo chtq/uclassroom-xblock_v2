@@ -15,14 +15,19 @@ function UcDockerXBlock(runtime, element) {
     }
     
     function resultCallback(response){
-        $('.result', element).html(response.message);
+        if(response.message){
+            console.log("fsfsfsdfsdf"+response.message)
+            var ll=response.message.join('<br>');
+            console.log(ll)
+            $('.result', element).html(ll);
+       }
     }
 
     $('.view_result_btn', element).click(function(eventObject){
         params={
             "name":eventObject.target.name
         };
-        
+       console.log(params); 
         $.ajax({
             type: "POST",
             url: viewresultHandlerUrl,

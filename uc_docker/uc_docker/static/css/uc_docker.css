@@ -1,7 +1,7 @@
 /* CSS for UcDockerXBlock */
 .uc_xblock
 {
-    width: 600px;
+    width: 700px;
     border: solid 1px #ccc;
 }
 
@@ -35,7 +35,7 @@
 {
     background-color: #eee;
     border: solid 1px #666;
-    width: 160px;
+    width: 200px;
     text-align: center;
 }
 

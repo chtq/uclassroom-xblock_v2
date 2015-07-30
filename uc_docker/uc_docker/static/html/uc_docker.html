@@ -24,8 +24,8 @@
                             <a href="javascript:void(0);" class="btn start_docker_btn btn-info btn-sm" name="{{ docker.name }}">Start</a>
                             {% elif docker.status == "running" %}
                             <a href="javascript:void(0);" class="btn stop_docker_btn btn-info btn-sm" name="{{ docker.name }}">Stop</a>
-                            <a href="http://{{ docker.host }}:{{ docker.port }}/" target="_blank" class="btn docker_terminal_btn btn-info btn-sm" name="{{ docker.name }}">Terminal</a>
-                            <a href="http://{{ docker.host }}:{{ docker.vnc }}/vnc_auto.html" target="_blank" class="btn docker_vnc_btn btn-info btn-sm" name="{{ docker.name }}">VNC</a>
+                            <a href="http://{{ docker.host }}:{{ docker.vnc }}/" target="_blank" class="btn docker_terminal_btn btn-info btn-sm" name="{{ docker.name }}">Terminal</a>
+                            <a href="http://{{ docker.host }}:{{ docker.port }}/vnc_auto.html" target="_blank" class="btn docker_vnc_btn btn-info btn-sm" name="{{ docker.name }}">VNC</a>
                             <a href="javascript:void(0);" class="btn view_result_btn btn-info btn-sm" name="{{ docker.name }}">result</a>
                             {% else %}
                             {{ docker.status }}
@@ -65,7 +65,7 @@
             <button id="create_docker_btn" type="button" class="btn btn-primary">Create Docker</button>
         </div>
     </div>
-    <div class="report">
+    <div class="uc_panel">
         <span class="result">{{ report }}</span>
     </div>
 </div>

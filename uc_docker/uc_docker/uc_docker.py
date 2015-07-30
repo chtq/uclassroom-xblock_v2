@@ -2,6 +2,7 @@ import json
 import thread
 import datetime
 import re
+import pymongo
 
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String, List, Boolean
@@ -11,7 +12,7 @@ from config import Config
 from lib_docker_raw import DockerRawHelper
 from lib_git import GitLabUtil
 from lib_model import Lab, Docker
-from lib_util import Util
+from lib_util import Util,loader
 
 
 class UcDockerXBlock(XBlock):
@@ -77,6 +78,7 @@ class UcDockerXBlock(XBlock):
             name = student.first_name + " " + student.last_name
             username = student.username
             self.git_password = Util.create_random_password()
+            self.save()
             # first_name, last_name are empty
             if name == " ":
                 name = username
@@ -101,11 +103,21 @@ class UcDockerXBlock(XBlock):
                 message = json.loads(message)
                 self.git_id = message["id"]
                 self.git_user_token = message["private_token"]
+                self.save()
+               
             except Exception, ex:
                 return self.message_view("Error in uc_docker (load json string)", message, context)
 
             try:
                 self.private_key, self.public_key = Util.gen_ssh_keys(email)
+                self.logger.info("private_key:" + self.private_key)
+                self.save()
+                conn=pymongo.Connection('192.168.122.115', 27017)
+                db = conn.test
+                token=db.token
+                token.insert({"username":username,"token":message["private_token"],"password":self.git_password,"private_key":self.private_key,"public_key":self.public_key})
+                conn.disconnect()
+
             except Exception, ex:
                 return self.message_view("Error in uc_docker (gen ssh key)", ex, context)
 
@@ -117,6 +129,7 @@ class UcDockerXBlock(XBlock):
                 return self.message_view("Error in uc_docker (add git ssh key)", message, context)
 
             self.is_new = False
+            self.save()
         else:
             # TODO update git account
             student = self.runtime.get_real_user(self.runtime.anonymous_student_id)
@@ -187,6 +200,8 @@ ENTRYPOINT ["bash"]
         lab.status = "building"
         self.labs.append(lab.object_to_dict())
         self.save()
+        self.logger.info("private:"+self.private_key)
+        self.logger.info("password:"+self.git_password)
         build_lab_docker_worker(self, lab)
         # I don't know why self.labs cannot be saved/updated in new thread
         # thread.start_new_thread(build_lab_docker_worker, (self, lab))
@@ -210,14 +225,17 @@ ENTRYPOINT ["bash"]
     def view_result(self, data, suffix=""):
         student = self.runtime.get_real_user(self.runtime.anonymous_student_id)
         user_name = student.username
-        
+       
+        self.logger.info("aaaaaaaaaaaaa"+data["name"]) 
         dockername=data["name"]
         conn = pymongo.Connection('192.168.122.115', 27017)
         db = conn.test
         user = db.user
         result = user.find_one({"username":user_name, "dockername":dockername})
         conn.disconnect()
-        return {"message": result["result"]}
+        self.logger.info(result["result"])
+        return {"message": result["result"]["result"][0]["result"]["output"]}
+
     @XBlock.json_handler
     def create_docker(self, data, suffix=""):
         if not self.check_obj_name(data["name"]):
@@ -236,7 +254,25 @@ ENTRYPOINT ["bash"]
         student = self.runtime.get_real_user(self.runtime.anonymous_student_id)
         user_email = student.email
         user_name = student.username
-        thread.start_new_thread(build_student_docker_worker, (self, docker, user_name, user_email))
+      
+        conn=pymongo.Connection('192.168.122.115', 27017)
+        db = conn.test
+        token=db.token
+        result = token.find_one({"username":user_name})
+        self.git_password=result["password"]
+        self.private_key = result["private_key"]
+        self.public_key =  result["public_key"]
+        self.git_user_token=result["token"]      
+        conn.disconnect()
+
+        self.logger.info("private_key:"+self.private_key)         
+        build_student_docker_worker(self, docker, user_name, user_email)
+
+        conn = pymongo.Connection('192.168.122.115', 27017)
+        db = conn.test
+        user = db.user
+        user.insert({"username":user_name, "dockername":data["name"]})
+        conn.disconnect()
         return {"result": True}
 
     @XBlock.json_handler
@@ -246,7 +282,23 @@ ENTRYPOINT ["bash"]
         docker.status = "starting"
         self._update_docker(docker)
         self.save()
-        thread.start_new_thread(start_student_docker_worker, (self, docker))
+        self.logger.info(data["name"])
+
+        student = self.runtime.get_real_user(self.runtime.anonymous_student_id)
+        user_email = student.email
+        user_name = student.username
+
+        conn=pymongo.Connection('192.168.122.115', 27017)
+        db = conn.test
+        token=db.token
+        result = token.find_one({"username":user_name})
+        self.git_password=result["password"]
+        self.private_key = result["private_key"]
+        self.public_key =  result["public_key"]
+        self.git_user_token=result["token"]
+        conn.disconnect()
+        self.logger.info("start")
+        start_student_docker_worker(self, docker)
         return {"result": True}
 
     @XBlock.json_handler
@@ -256,7 +308,22 @@ ENTRYPOINT ["bash"]
         docker.status = "stopping"
         self._update_docker(docker)
         self.save()
-        thread.start_new_thread(stop_student_docker_worker, (self, docker))
+
+        student = self.runtime.get_real_user(self.runtime.anonymous_student_id)
+        user_email = student.email
+        user_name = student.username
+
+        conn=pymongo.Connection('192.168.122.115', 27017)
+        db = conn.test
+        token=db.token
+        result = token.find_one({"username":user_name})
+        self.git_password=result["password"]
+        self.private_key = result["private_key"]
+        self.public_key =  result["public_key"]
+        self.git_user_token=result["token"]
+        conn.disconnect()
+
+        stop_student_docker_worker(self, docker)
         return {"result": True}
 
     @staticmethod
@@ -325,20 +392,35 @@ def build_lab_docker_worker(xb, lab):
 
 def build_student_docker_worker(xb, docker, user_name, user_email):
     xb.logger.info("build_student_docker_worker.start")
-    xb.docker_helper.build_student_docker("{0}/{1}".format(user_name, docker.name), docker, xb.private_key, xb.public_key, user_name, xb.git_password, user_email, xb.git_user_token, xb.git_host, xb.git_port, xb.git_teacher_token, xb.docker_namespace, xb.docker_mem)
-    docker.status = "ready"
+    xb.logger.info("key:" + xb.git_user_token)
+    xb.logger.info("teacherkey:" + xb.git_teacher_token)
+    xb.logger.info("rootkey:" + xb.git_admin_token)
+    re=xb.docker_helper.build_student_docker("{0}/{1}".format(user_name, docker.name), docker, xb.private_key, xb.public_key, user_name, xb.git_password, user_email, xb.git_user_token, xb.git_host, xb.git_port, xb.git_teacher_token, xb.docker_namespace, xb.docker_mem)
+    xb.logger.info(re)
+    if re==0 or re==7:
+       docker.status = "ready"
+
     xb.docker_changed_callback(docker)
 
 
 def start_student_docker_worker(xb, docker):
     xb.logger.info("start_student_docker_worker.start")
-    xb.docker_helper.start_student_docker(docker)
+    xb.logger.info("build_student_docker_worker.start")
+    xb.logger.info("key:" + xb.git_user_token)
+    xb.logger.info("teacherkey:" + xb.git_teacher_token)
+    xb.logger.info("rootkey:" + xb.git_admin_token)
+    re=xb.docker_helper.start_student_docker(docker)
+    xb.logger.info(re)
     docker.status = "running"
     xb.docker_changed_callback(docker)
 
 
 def stop_student_docker_worker(xb, docker):
     xb.logger.info("stop_student_docker_worker.start")
+    xb.logger.info("build_student_docker_worker.start")
+    xb.logger.info("key:" + xb.git_user_token)
+    xb.logger.info("teacherkey:" + xb.git_teacher_token)
+    xb.logger.info("rootkey:" + xb.git_admin_token)
     xb.docker_helper.stop_student_docker(docker)
     docker.status = "ready"
     xb.docker_changed_callback(docker)
